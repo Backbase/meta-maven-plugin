@@ -1,0 +1,10 @@
+images:
+- registry: experimental
+  image: ${project.artifactId}
+  tag: ${project.version}
+  hello: world
+- registry: staging
+  image: ${project.artifactId}
+  tag: ${project.version}-special
+  hello: dolly
+  suffix: special
