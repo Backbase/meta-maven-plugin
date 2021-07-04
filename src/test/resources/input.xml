@@ -1,0 +1,17 @@
+<meta>
+    <images>
+        <image>
+            <registry>experimental</registry>
+            <image>${project.artifactId}</image>
+            <tag>${project.version}</tag>
+            <hello>world</hello>
+        </image>
+        <image>
+            <registry>staging</registry>
+            <image>${project.artifactId}</image>
+            <tag>${project.version}-special</tag>
+            <hello>dolly</hello>
+            <suffix>special</suffix>
+        </image>
+    </images>
+</meta>

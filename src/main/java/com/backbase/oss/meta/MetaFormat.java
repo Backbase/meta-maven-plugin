@@ -1,6 +1,7 @@
 package com.backbase.oss.meta;
 
 import java.util.Map;
+import org.json.JSONObject;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.DumperOptions.NonPrintableStyle;
@@ -8,27 +9,32 @@ import org.yaml.snakeyaml.DumperOptions.NonPrintableStyle;
 public enum MetaFormat {
     JSON {
         @Override
-        String convert(String xml) {
-            final String json = org.json.XML.toJSONObject(xml).toString(4);
+        String convert(JSONObject json) {
+            final String text = json.toString(4);
 
-            return json;
+            return text;
         }
     },
     XML {
         @Override
-        String convert(String xml) {
-            return xml;
+        String convert(JSONObject json) {
+            return org.json.XML.toString(json, "meta");
         }
     },
     YAML {
         @Override
-        String convert(String xml) {
-            final Map<String, Object> jmap = org.json.XML.toJSONObject(xml).toMap();
+        String convert(JSONObject json) {
+            final Map<String, Object> jmap = json.toMap();
             final String yaml = new Yaml(OPTIONS).dump(jmap);
 
             return yaml;
         }
-
+    },
+    YML {
+        @Override
+        String convert(JSONObject json) {
+            return YAML.convert(json);
+        }
     },
     ;
 
@@ -39,5 +45,5 @@ public enum MetaFormat {
         OPTIONS.setNonPrintableStyle(NonPrintableStyle.ESCAPE);
     }
 
-    abstract String convert(String xml);
+    abstract String convert(JSONObject json);
 }
