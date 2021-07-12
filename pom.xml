@@ -21,6 +21,25 @@
         <maven>${maven.libs.version}</maven>
     </prerequisites>
 
+    <distributionManagement>
+        <repository>
+            <id>${repository.release.id}</id>
+            <url>${repository.release.url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>${repository.snapshot.id}</id>
+            <url>${repository.snapshot.url}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <url>https://github.com/Backbase/meta-maven-plugin</url>
+        <connection>https://github.com/Backbase/meta-maven-plugin.git</connection>
+        <developerConnection>${developerConnection}</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
     <build>
         <defaultGoal>install</defaultGoal>
         <pluginManagement>
@@ -106,6 +125,11 @@
                     <artifactId>maven-release-plugin</artifactId>
                     <version>3.0.0-M4</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>1.2.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -118,6 +142,26 @@
                             <goal>descriptor</goal>
                             <goal>helpmojo</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                        <configuration>
+                            <flattenMode>ossrh</flattenMode>
+                            <pomElements>
+                                <parent>keep</parent>
+                                <profiles>remove</profiles>
+                                <scm>remove</scm>
+                            </pomElements>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
