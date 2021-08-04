@@ -159,6 +159,12 @@ public class MetaMojo extends AbstractMojo {
     private boolean prettyArrays;
 
     /**
+     * Skip the execution for POM packaging.
+     */
+    @Parameter(property = "meta.skipPom", defaultValue = "true")
+    private boolean skipPom;
+
+    /**
      * Skip the execution.
      */
     @Parameter(property = "meta.skip")
@@ -171,7 +177,7 @@ public class MetaMojo extends AbstractMojo {
 
             return;
         }
-        if ("pom".equals(this.project.getPackaging())) {
+        if (this.skipPom && "pom".equals(this.project.getPackaging())) {
             getLog().info("execution is skipped for POM packaging");
 
             return;
