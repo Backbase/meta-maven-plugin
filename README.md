@@ -85,6 +85,20 @@ Skip the execution.
 
 *User property*: `meta.skip`
 
+##### skipPom
+
+By default, the execution is skipped for POM packaging, but setting this flag to false will generate the meta artifact for a POM project too.
+
+The developers that use this flag need to be aware that the configuration of a Maven plugin is propagated to child modules, therefore they may need to
+
+* set `<inherited>` element of the plugin to `false`
+* disable the plugin in the child modules
+* add child specific execution/configuration
+
+*User property*: `meta.skipPom`
+
+*Default*: `true`
+
 ### Configuration Example
 
 #### Simple Project

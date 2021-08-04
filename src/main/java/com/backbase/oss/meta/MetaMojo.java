@@ -160,6 +160,19 @@ public class MetaMojo extends AbstractMojo {
 
     /**
      * Skip the execution for POM packaging.
+     * <p>
+     * By default, the execution is skipped for POM packaging, but setting this flag to {@code false}
+     * will generate the meta artifact for a POM project too.
+     * </p>
+     * <p>
+     * The developers that use this flag need to be aware that the configuration of a Maven plugin is
+     * propagated to child modules, therefore they may need to
+     * <ul>
+     * <li>set &lt;inherited&gt; element to {@code false}</li>
+     * <li>disable the plugin in the child modules</li>
+     * <li>add child specific executions</li>
+     * <ul>
+     * </p>
      */
     @Parameter(property = "meta.skipPom", defaultValue = "true")
     private boolean skipPom;
