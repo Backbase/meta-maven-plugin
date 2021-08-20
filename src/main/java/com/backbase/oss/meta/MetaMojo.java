@@ -1,14 +1,15 @@
 package com.backbase.oss.meta;
 
-import static org.apache.maven.shared.utils.xml.Xpp3Dom.*;
 import static java.util.Optional.ofNullable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.Iterator;
+import java.nio.file.Path;
 import java.util.List;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -16,77 +17,21 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.atteo.evo.inflector.English;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.json.JSONObject;
-import org.json.XML;
 
 /**
  * Generate metadata artefacts from the configuration.
  */
-@Mojo(name = "meta", requiresProject = true, defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
+@Mojo(name = "meta", requiresProject = true, threadSafe = true, defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class MetaMojo extends AbstractMojo {
 
-    static JSONObject toMeta(String xml) {
-        return ofNullable(XML.toJSONObject(xml).get("meta"))
-            .map(JSONObject.class::cast)
-            .map(MetaMojo::cleanAttributes)
-            .orElseThrow(() -> new IllegalArgumentException("Cannot find any meta"));
-    }
-
-    static JSONObject cleanAttributes(JSONObject json) {
-        final Iterator<String> keys = json.keys();
-
-        while (keys.hasNext()) {
-            final String key = keys.next();
-
-            switch (key) {
-                case CHILDREN_COMBINATION_MODE_ATTRIBUTE:
-                case SELF_COMBINATION_MODE_ATTRIBUTE:
-                    keys.remove();
-                    break;
-
-                default:
-                    final Object val = json.get(key);
-
-                    if (val instanceof JSONObject) {
-                        cleanAttributes((JSONObject) val);
-                    }
-
-                    break;
-            }
-        }
-
-        return json;
-    }
-
-    static JSONObject prettyArrays(JSONObject json) {
-        final Iterator<String> keys = json.keys();
-
-        while (keys.hasNext()) {
-            final String key1 = keys.next();
-            final Object val1 = json.get(key1);
-
-            if (val1 instanceof JSONObject) {
-                final JSONObject json1 = (JSONObject) val1;
-
-                if ((json1.length() == 1)) {
-                    final String key2 = json1.keys().next();
-
-                    if (key1.equals(English.plural(key2))) {
-                        json.put(key1, json1.get(key2));
-                    }
-                } else {
-                    prettyArrays(json1);
-                }
-            }
-        }
-
-        return json;
-    }
-
-    @Parameter(property = "project", readonly = true)
+    @Component
     private MavenProject project;
+    @Component
+    private MavenSession session;
+    @Component
+    private MojoExecution execution;
 
     @Component
     private MavenProjectHelper projectHelper;
@@ -196,11 +141,9 @@ public class MetaMojo extends AbstractMojo {
             return;
         }
 
-        JSONObject json = toMeta(this.meta.toString());
-
-        if (this.prettyArrays) {
-            json = prettyArrays(json);
-        }
+        final JSONObject json = new MetaConverter(this.session, this.execution)
+            .prettyArrays(this.prettyArrays)
+            .toJson(this.meta);
 
         for (final String format : this.formats) {
             generate(format, json);
@@ -222,15 +165,19 @@ public class MetaMojo extends AbstractMojo {
         }
     }
 
-    public void createMeta(File artefact, String type, String text) throws FileNotFoundException {
-        artefact.getParentFile().mkdirs();
+    private void createMeta(File file, String type, String text) throws FileNotFoundException {
+        file.getParentFile().mkdirs();
 
-        try (PrintWriter out = new PrintWriter(artefact)) {
+        try (PrintWriter out = new PrintWriter(file)) {
             out.write(text);
         }
 
         if (this.attach) {
-            this.projectHelper.attachArtifact(this.project, type, this.classifier, artefact);
+            final Path path = this.project.getBasedir().getParentFile().toPath().relativize(file.toPath());
+
+            getLog().info("Attached " + path);
+
+            this.projectHelper.attachArtifact(this.project, type, this.classifier, file);
         }
     }
 }

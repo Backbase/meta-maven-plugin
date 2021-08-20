@@ -127,12 +127,12 @@ The developers that use this flag need to be aware that the configuration of a M
                     <images>
                         <image>
                             <registry>experimental</registry>
-                            <image>${project.artefactId}</image>
+                            <image>${project.artifactId}</image>
                             <tag>${project.version}</tag>
                         </image>
                         <image>
                             <registry>staging</registry>
-                            <image>${project.artefactId}</image>
+                            <image>${project.artifactId}</image>
                             <tag>${project.version}-special</tag>
                             <suffix>special</suffix>
                             <extra-info>Some extra information - fyi.</extra-info>
@@ -164,7 +164,7 @@ The developers that use this flag need to be aware that the configuration of a M
                     <images>
                         <image>
                             <registry>experimental</registry>
-                            <image>${project.artefactId}</image>
+                            <image>${project.artifactId}</image>
                             <tag>${project.version}</tag>
                         </image>
                     </images>
@@ -189,7 +189,7 @@ The developers that use this flag need to be aware that the configuration of a M
                     <images combine.children="append">
                         <image>
                             <registry>staging</registry>
-                            <image>${project.artefactId}</image>
+                            <image>${project.artifactId}</image>
                             <tag>${project.version}-special</tag>
                             <suffix>special</suffix>
                             <extra-info>Some extra information - fyi.</extra-info>

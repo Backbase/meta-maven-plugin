@@ -3,8 +3,8 @@ package com.backbase.oss.meta;
 import java.util.Map;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.DumperOptions.NonPrintableStyle;
+import org.yaml.snakeyaml.Yaml;
 
 public enum MetaFormat {
     JSON {
