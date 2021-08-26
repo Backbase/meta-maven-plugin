@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.backbase.oss</groupId>
     <artifactId>meta-maven-plugin</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>meta-maven-plugin Maven Mojo</name>
     <url>http://maven.apache.org</url>
@@ -36,7 +36,7 @@
         <url>https://github.com/Backbase/meta-maven-plugin</url>
         <connection>https://github.com/Backbase/meta-maven-plugin.git</connection>
         <developerConnection>${developerConnection}</developerConnection>
-        <tag>meta-maven-plugin-0.1.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <build>
